@@ -74,7 +74,7 @@ class CPTFileController(ViktorController):
     @PlotlyView("Pile Design", duration_guess=1)
     def visualize_pile(self, params: Munch, **kwargs) -> PlotlyResult:
         # fig = visualise_pile(cpt_params=params)
-        fig = visualise_pile(params, params)
+        fig = visualise_pile(params, params.PILE)
 
         data_group = self.get_data_group(params)
         return PlotlyResult(fig.to_json())

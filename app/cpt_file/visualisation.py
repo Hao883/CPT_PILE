@@ -155,7 +155,7 @@ def visualise_pile(cpt_params: Munch, PILE_params: Munch):
     fig.add_trace(
         go.Scatter(
             name="Reaction Load",
-            x=cpt_params["Load"] * np.ones(100),
+            x=PILE_params["Load"] * np.ones(100),
             y=np.linspace(min(el * 1e-3 for el in parsed_cpt.elevation), 0, 100),
             mode="lines",
             line=dict(color="black", width=1),
