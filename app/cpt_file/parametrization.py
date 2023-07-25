@@ -38,8 +38,8 @@ from .constants import (
 )
 
 CLASSIFICATION_METHODS = [
-    OptionListElement(label="Robertson Method (Fugro)", value="robertson"),
-    OptionListElement(label="Table Method", value="table"),
+    OptionListElement(label="Robertson Method (1990)", value="robertson"),
+    # OptionListElement(label="Table Method", value="table"),
 ]
 
 
@@ -54,10 +54,10 @@ class CPTFileParametrization(Parametrization):
 
     classification = Step("Upload and classification", on_next=validate_step_1)
     classification.text_01 = Text(
-        """# Welcome to the CPT interpretation app!
+        """# Welcome to the CPT Pile Parametric design app!
 
-With this app you will be able to classify and interpret GEF-formatted CPT files by uploading and automatically 
-classifying the soil profile based on the classification table.
+With this app you will be able to (1) classify and interpret GEF-formatted CPT files by uploading and automatically 
+classifying the soil profile; (2) conduct parametric Pile design by selecting desired pile parameters. 
 
 ## Step 1: Upload a GEF file
 
@@ -78,7 +78,7 @@ GEF file available.
         flex=15,
     )
     classification.text_02 = Text(
-        """## Step 2: Select your classification method
+        """## Step 2: Select Classification Method
         
 Select your preferred classification method.
         """
@@ -89,18 +89,18 @@ Select your preferred classification method.
         default="robertson",
         autoselect_single_option=True,
         variant="radio-inline",
-        description="Robertson method: Robertson method, optimized for the dutch soil by Fugro. \n"
-        "\n Table method: Custom classification.",
+        description="Robertson method (1990) \n"
+        "\n Robertson method (2016)",
     )
-    classification.change_table = BooleanField("Change classification table")
+    # classification.change_table = BooleanField("Change classification table")
     classification.robertson = TableInput(
         "Robertson table",
         default=DEFAULT_ROBERTSON_TABLE,
-        visible=And(
-            Lookup("classification.change_table"),
-            IsEqual(Lookup("classification.method"), "robertson"),
-        ),
-    )
+        # visible=And(
+        #     Lookup("classification.change_table"),
+        #     IsEqual(Lookup("classification.method"), "robertson"),
+        visible=False,
+        )
     classification.robertson.name = TextField("Robertson Zone")
     classification.robertson.ui_name = OptionField("Soil", options=DEFAULT_SOIL_NAMES)
     classification.robertson.color = TextField("Color (R, G, B)")
@@ -111,11 +111,11 @@ Select your preferred classification method.
     classification.table = TableInput(
         "Classification table",
         default=DEFAULT_CLASSIFICATION_TABLE,
-        visible=And(
-            Lookup("classification.change_table"),
-            IsEqual(Lookup("classification.method"), "table"),
-        ),
-    )
+        # visible=And(
+        #     Lookup("classification.change_table"),
+        #     IsEqual(Lookup("classification.method"), "table"),
+        visible=False,
+        )
     classification.table.name = OptionField("Naam", options=DEFAULT_SOIL_NAMES)
     classification.table.color = TextField("Kleur (R, G, B)")
     classification.table.qc_min = NumberField("qc min [MPa]", num_decimals=2)
@@ -167,11 +167,11 @@ Classify the uploaded GEF file by clicking the "Classify soil layout" button. Pr
         description="Reset the table to the original soil layout",
     )
 
-    cpt.ground_water_level = NumberField("Phreatic level", name="ground_water_level", suffix="m NAP", flex=50)
-    cpt.ground_level = NumberField("Ground level", name="ground_level", suffix="m NAP", flex=50)
+    cpt.ground_water_level = NumberField("Phreatic level", name="ground_water_level", suffix="RL", flex=50)
+    cpt.ground_level = NumberField("Ground level", name="ground_level", suffix="RL", flex=50)
     cpt.soil_layout = TableInput("Soil layout", name="soil_layout")
     cpt.soil_layout.name = OptionField("Material", options=DEFAULT_SOIL_NAMES)
-    cpt.soil_layout.top_of_layer = NumberField("Top (m NAP)", num_decimals=1)
+    cpt.soil_layout.top_of_layer = NumberField("Top (m RL)", num_decimals=1)
 
     # hidden fields
     cpt.gef_headers = HiddenField("GEF Headers", name="headers")
@@ -190,29 +190,29 @@ Classify the uploaded GEF file by clicking the "Classify soil layout" button. Pr
         "Pile Diameter (m)",
         default=1,
         min=0.5,
-        step=0.5,
+        step=0.1,
         max=3,
         # flex=33,
         variant='slider'
     )
 
-    PILE.Length = NumberField(
-        "Pile Length (m)",
-        default=10,
-        min=3,
-        step=0.2,
-        max=50,
-        # flex=33,
-        variant='slider'
-    )
+    # PILE.Length = NumberField(
+    #     "Pile Length (m)",
+    #     default=10,
+    #     min=3,
+    #     step=0.2,
+    #     max=50,
+    #     # flex=33,
+    #     variant='slider'
+    # )
 
     PILE.Load = NumberField(
-        "Pile Load Required (MPa)",
-        default=30,
+        "Pile Load Required (kN)",
+        default=5000,
         min=10,
-        step=2,
-        max=50,
-        # flex=33,
+        # step=,
+        max=30000,
+        flex=50,
         variant='slider'
     )
     PILE.lb = LineBreak()  # split the fields in 2 pairs

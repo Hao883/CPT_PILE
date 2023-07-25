@@ -62,14 +62,20 @@ class CPTFileController(ViktorController):
         gef_file = self._get_sample_gef_file()
         return DownloadResult(gef_file, "sample_gef.GEF")
 
-    @PlotlyAndDataView("CPT interpretation", duration_guess=3)
-    def visualize_cpt(self, params: Munch, **kwargs) -> PlotlyAndDataResult:
-        """Visualizes the Qc and Rf line plots, the soil layout bar plots and the data of the cpt."""
-        # fig = visualise_cpt(cpt_params=params)
-        fig = visualise_cpt(params)
+    # @PlotlyAndDataView("CPT interpretation", duration_guess=3)
+    # def visualize_cpt(self, params: Munch, **kwargs) -> PlotlyAndDataResult:
+    #     """Visualizes the Qc and Rf line plots, the soil layout bar plots and the data of the cpt."""
+    #     # fig = visualise_cpt(cpt_params=params)
+    #     fig = visualise_cpt(params)
+    #
+    #     data_group = self.get_data_group(params)
+    #     return PlotlyAndDataResult(fig.to_json(), data=data_group)
 
-        data_group = self.get_data_group(params)
-        return PlotlyAndDataResult(fig.to_json(), data=data_group)
+    @PlotlyView("CPT interpretation", duration_guess=3)
+    def visualize_cpt(self, params: Munch, **kwargs) -> PlotlyResult:
+        """Visualizes the Qc and Rf line plots, the soil layout bar plots and the data of the cpt."""
+        fig = visualise_cpt(params)
+        return PlotlyResult(fig.to_json())
 
     @PlotlyView("Pile Design", duration_guess=1)
     def visualize_pile(self, params: Munch, **kwargs) -> PlotlyResult:
